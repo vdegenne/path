@@ -1,5 +1,9 @@
-export function trim(input: string) {
-	return input.replace(/^[\/\s]+|[\/\s]+$/g, '')
+export function trim(input: string, preserveRootSlash = false) {
+	let trimmed = input.replace(/^[\/\s]+|[\/\s]+$/g, '')
+	if (preserveRootSlash && input.startsWith('/')) {
+		trimmed = '/' + trimmed
+	}
+	return trimmed
 }
 
 export function explode(path: string) {
@@ -13,10 +17,12 @@ export function basename(path: string) {
 	return parts.pop() || ''
 }
 
-export function dirname(path: string) {
-	const parts = explode(path)
-	if (parts.length <= 1) return '/'
+export function dirname(path: string, preserveRootSlash = false) {
+	const parts = explode(trim(path, preserveRootSlash))
+	if (parts.length <= 1) return preserveRootSlash ? '/' : ''
 	parts.pop()
-	return parts.join('/') + '/'
+	const result = parts.join('/')
+	return preserveRootSlash ? '/' + result : result
 }
+
 export const oneDirectoryUp = dirname // alias
