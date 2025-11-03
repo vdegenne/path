@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/path",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "",
 	"type": "module",
 	"exports": {
@@ -11,7 +11,8 @@
 		"./lib/"
 	],
 	"scripts": {
-		"build": "wireit"
+		"build": "wireit",
+		"test": "wireit"
 	},
 	"devDependencies": {
 		"typescript": "^5.9.3",
@@ -28,6 +29,16 @@
 			"output": [
 				"./lib"
 			]
+		},
+		"test": {
+			"command": "node ./test.js",
+			"dependencies": [
+				"build"
+			],
+			"files": [
+				"./test.js"
+			],
+			"output": []
 		}
 	}
 }

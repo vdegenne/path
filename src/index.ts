@@ -1,32 +1,46 @@
-// Removes leading/trailing slashes and spaces; optionally preserves a leading slash
+function trimChar(input: string, character = ' ') {
+	const pattern = new RegExp(`^${character}+|${character}+$`, 'g')
+	return input.replace(pattern, '')
+}
+export function trimSpaces(input: string) {
+	return trimChar(input)
+}
+export function trimSlashes(input: string) {
+	return trimChar(input, '/')
+}
+
 export function trim(input: string, preserveRootSlash = false) {
-	let trimmed = input.replace(/^[\/\s]+|[\/\s]+$/g, '')
-	if (preserveRootSlash && input.startsWith('/')) {
+	let trimmed = trimSpaces(input)
+	const startsWithSlash = trimmed.startsWith('/')
+	trimmed = trimSlashes(trimmed)
+	if (preserveRootSlash && startsWithSlash) {
 		trimmed = '/' + trimmed
 	}
 	return trimmed
 }
 
-// Splits a path into segments, ignoring empty segments
 export function explode(path: string) {
 	return trim(path)
 		.split('/')
 		.filter((i) => i)
 }
 
-// Returns the last segment of a path
-export function basename(path: string) {
+export function basename(path: string, preserveRootSlash = false) {
+	const startsWithSlash = trimSpaces(path).startsWith('/')
 	const parts = explode(path)
-	return parts.pop() || ''
+	const pop = parts.pop()
+	return pop ?? (preserveRootSlash && startsWithSlash ? '/' : '')
 }
 
-// Returns the parent path of a given path; optionally preserves a leading slash
 export function dirname(path: string, preserveRootSlash = false) {
-	const parts = explode(trim(path, preserveRootSlash))
-	if (parts.length <= 1) return preserveRootSlash ? '/' : ''
+	let trimmed = trimSpaces(path)
+	const startsWithSlash = trimmed.startsWith('/')
+	trimmed = trimSlashes(trimmed)
+	const parts = explode(path)
+	if (parts.length <= 1) return preserveRootSlash && startsWithSlash ? '/' : ''
 	parts.pop()
 	const result = parts.join('/')
-	return preserveRootSlash ? '/' + result : result
+	return preserveRootSlash && startsWithSlash ? '/' + result : result
 }
 
 // Alias for dirname
