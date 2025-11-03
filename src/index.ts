@@ -1,46 +1,26 @@
-function trimChar(input: string, character = ' ') {
-	const pattern = new RegExp(`^${character}+|${character}+$`, 'g')
-	return input.replace(pattern, '')
-}
-export function trimSpaces(input: string) {
-	return trimChar(input)
-}
-export function trimSlashes(input: string) {
-	return trimChar(input, '/')
-}
-
-export function trim(input: string, preserveRootSlash = false) {
-	let trimmed = trimSpaces(input)
-	const startsWithSlash = trimmed.startsWith('/')
-	trimmed = trimSlashes(trimmed)
-	if (preserveRootSlash && startsWithSlash) {
-		trimmed = '/' + trimmed
-	}
-	return trimmed
-}
-
 export function explode(path: string) {
-	return trim(path)
+	return path
+		.replace(/^\s+/, '')
+		.replace(/^\/+/, '')
 		.split('/')
 		.filter((i) => i)
 }
 
-export function basename(path: string, preserveRootSlash = false) {
-	const startsWithSlash = trimSpaces(path).startsWith('/')
+export function basename(path: string): string {
 	const parts = explode(path)
-	const pop = parts.pop()
-	return pop ?? (preserveRootSlash && startsWithSlash ? '/' : '')
+	if (parts.length === 0) {
+		if (path.replace(/^\s+/, '').startsWith('/')) {
+			return '/'
+		}
+	}
+	return parts[parts.length - 1] || ''
 }
 
-export function dirname(path: string, preserveRootSlash = false) {
-	let trimmed = trimSpaces(path)
-	const startsWithSlash = trimmed.startsWith('/')
-	trimmed = trimSlashes(trimmed)
+export function dirname(path: string): string {
 	const parts = explode(path)
-	if (parts.length <= 1) return preserveRootSlash && startsWithSlash ? '/' : ''
+	const startsWithSlash = path.replace(/^\s+/, '').startsWith('/')
 	parts.pop()
-	const result = parts.join('/')
-	return preserveRootSlash && startsWithSlash ? '/' + result : result
+	return (startsWithSlash ? '/' : '') + parts.join('/') || '/'
 }
 
 // Alias for dirname
