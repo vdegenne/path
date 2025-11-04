@@ -23,5 +23,14 @@ export function dirname(path: string): string {
 	return (startsWithSlash ? '/' : '') + parts.join('/') || '/'
 }
 
+export function join(...parts: string[]) {
+	if (parts.length === 0) {
+		return ''
+	}
+	const startsWithSlash = parts[0]!.replace(/^\s+/, '').startsWith('/')
+	const total = explode(parts.join('/')).join('/')
+	return (startsWithSlash ? '/' : '') + total
+}
+
 // Alias for dirname
 export const oneDirectoryUp = dirname

@@ -1,3 +1,3 @@
-import {dirname} from './lib/index.js'
+import {join} from './lib/index.js'
 
-console.log(dirname('  /  test/asdf/ adf'))
+console.log(join('///a1/a2', 'df', '/yes////   /', '/'))
